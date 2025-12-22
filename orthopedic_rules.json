@@ -1,0 +1,33 @@
+[
+  { "conditions": ["xray_grade_1"], "conclusion": "osteoarthritis_mild" },
+  { "conditions": ["xray_grade_2"], "conclusion": "osteoarthritis_moderate" },
+  { "conditions": ["xray_grade_3"], "conclusion": "osteoarthritis_severe" },
+  { "conditions": ["xray_grade_4"], "conclusion": "osteoarthritis_severe" },
+
+  { "conditions": ["pain_vas_low"], "conclusion": "pain_mild" },
+  { "conditions": ["pain_vas_medium"], "conclusion": "pain_moderate" },
+  { "conditions": ["pain_vas_high"], "conclusion": "pain_severe" },
+
+  { "conditions": ["osteoarthritis_severe", "pain_severe"], "conclusion": "symptoms_severe" },
+  { "conditions": ["osteoarthritis_mild", "pain_mild"], "conclusion": "symptoms_mild" },
+
+  { "conditions": ["symptoms_mild"], "conclusion": "lifestyle_and_education_indicated" },
+  { "conditions": ["lifestyle_and_education_indicated", "lifestyle_failed"], "conclusion": "consider_pain_medication" },
+
+  { "conditions": ["consider_pain_medication"], "conclusion": "pain_medication_indicated" },
+  { "conditions": ["pain_medication_indicated", "pain_medication_failed"], "conclusion": "consider_injections" },
+
+  { "conditions": ["consider_injections"], "conclusion": "injections_indicated" },
+  { "conditions": ["injections_indicated", "injections_failed"], "conclusion": "consider_surgery" },
+
+  { "conditions": ["consider_surgery", "symptoms_severe"], "conclusion": "surgery_indicated" },
+
+  { "conditions": ["BMI_over_35"], "conclusion": "high_surgical_risk" },
+  { "conditions": ["significant_comorbidities"], "conclusion": "high_surgical_risk" },
+  { "conditions": ["low_health_literacy"], "conclusion": "high_surgical_risk" },
+
+  { "conditions": ["NOT_high_surgical_risk"], "conclusion": "low_surgical_risk" },
+
+  { "conditions": ["surgery_indicated", "low_surgical_risk"], "conclusion": "proceed_with_surgery" },
+  { "conditions": ["surgery_indicated", "high_surgical_risk"], "conclusion": "delay_or_avoid_surgery" }
+]
