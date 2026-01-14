@@ -1,9 +1,9 @@
 [
   {
     "conditions": ["kl_grade_3", "has_significant_pain"],
-    "conclusion": "surgery_arthoris_possible"
+    "conclusion": "surgery_arthrosis_possible"
   },
-  { "conditions": ["kl_grade_4"], "conclusion": "surgery_arthritis_possible" },
+  { "conditions": ["kl_grade_4"], "conclusion": "surgery_arthrosis_possible" },
   {
     "conditions": ["kl_grade_3", "no_significant_pain"],
     "conclusion": "reason_pain_treatment_explanation"
@@ -84,7 +84,7 @@
       "used_NSAID",
       "considered_tramadol"
     ],
-    "conclusion": "has_done_lifestyle_improvement"
+    "conclusion": "has_used_all_painkillers"
   },
   {
     "conditions": ["age_over_75"],
@@ -157,7 +157,7 @@
     "conclusion": "high_risk"
   },
   {
-    "conditions": ["high_risk_unknown", "kidney_desease_risk"],
+    "conditions": ["high_risk_unknown", "kidney_disease_risk"],
     "conclusion": "high_risk"
   },
   {
@@ -167,20 +167,20 @@
   {
     "conditions": [
       "high_risk_unknown",
-      "active_infection_or_immune_supression_risk"
+      "active_infection_or_immune_suppression_risk"
     ],
     "conclusion": "high_risk"
   },
 
   {
     "conditions": ["not_willing_to_stop_smoking"],
-    "conclusion": "advice_smoking_proticol"
+    "conclusion": "advice_smoking_protocol"
   },
 
   {
     "conditions": [
       "risk_worth_surgery",
-      "surgery_arthritis_possible",
+      "surgery_arthrosis_possible",
       "done_painkillers_lifestyle_injections",
       "complications_explained",
       "willing_to_stop_smoking"
