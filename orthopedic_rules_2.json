@@ -1,0 +1,190 @@
+[
+  {
+    "conditions": ["kl_grade_3", "has_significant_pain"],
+    "conclusion": "surgery_arthoris_possible"
+  },
+  { "conditions": ["kl_grade_4"], "conclusion": "surgery_arthritis_possible" },
+  {
+    "conditions": ["kl_grade_3", "no_significant_pain"],
+    "conclusion": "reason_pain_treatment_explanation"
+  },
+  {
+    "conditions": ["kl_grade_1"],
+    "conclusion": "reason_no_surgery_low_radiographic_severity"
+  },
+  {
+    "conditions": ["kl_grade_2"],
+    "conclusion": "reason_no_surgery_low_radiographic_severity"
+  },
+
+  { "conditions": ["BMI_below_18"], "conclusion": "high_surgical_risk" },
+  { "conditions": ["BMI_18_24"], "conclusion": "correct_weight_for_surgery" },
+  { "conditions": ["BMI_25_30"], "conclusion": "correct_weight_for_surgery" },
+  { "conditions": ["BMI_30_35"], "conclusion": "correct_weight_for_surgery" },
+  { "conditions": ["BMI_over_35"], "conclusion": "high_surgical_risk" },
+
+  { "conditions": ["BMI_30_35"], "conclusion": "advice_weight_loss" },
+
+  {
+    "conditions": ["done_painkillers_lifestyle", "has_used_all_injections"],
+    "conclusion": "done_painkillers_lifestyle_injections"
+  },
+
+  {
+    "conditions": [
+      "has_done_lifestyle_improvement",
+      "has_used_all_painkillers"
+    ],
+    "conclusion": "done_painkillers_lifestyle"
+  },
+
+  {
+    "conditions": ["not_done_lifestyle_improvement"],
+    "conclusion": "advice_lifestyle"
+  },
+  {
+    "conditions": [
+      "unknown_done_lifestyle_improvement",
+      "no_room_for_improvement_muscle_strength",
+      "no_room_for_improvement_conditional",
+      "no_room_for_improvement_lose_weight"
+    ],
+    "conclusion": "has_done_lifestyle_improvement"
+  },
+  {
+    "conditions": [
+      "no_heart_lungs_problems",
+      "room_for_improvement_muscle_strength"
+    ],
+    "conclusion": "not_done_lifestyle_improvement"
+  },
+  {
+    "conditions": [
+      "no_heart_lungs_problems",
+      "room_for_improvement_conditional"
+    ],
+    "conclusion": "not_done_lifestyle_improvement"
+  },
+  {
+    "conditions": [
+      "no_heart_lungs_problems",
+      "room_for_improvement_lose_weight"
+    ],
+    "conclusion": "not_done_lifestyle_improvement"
+  },
+
+  {
+    "conditions": ["not_used_all_painkillers"],
+    "conclusion": "advice_pain_killers"
+  },
+  {
+    "conditions": [
+      "unknown_used_all_painkillers",
+      "used_paracetamol",
+      "used_NSAID",
+      "considered_tramadol"
+    ],
+    "conclusion": "has_done_lifestyle_improvement"
+  },
+  {
+    "conditions": ["age_over_75"],
+    "conclusion": "considered_tramadol"
+  },
+  {
+    "conditions": ["age_under_75", "used_tramadol"],
+    "conclusion": "considered_tramadol"
+  },
+  {
+    "conditions": ["age_under_75", "not_used_tramadol"],
+    "conclusion": "not_used_all_painkillers"
+  },
+  {
+    "conditions": ["not_used_paracetamol"],
+    "conclusion": "not_used_all_painkillers"
+  },
+  {
+    "conditions": ["not_used_NSAID"],
+    "conclusion": "not_used_all_painkillers"
+  },
+
+  {
+    "conditions": ["not_used_all_injections"],
+    "conclusion": "advice_injection"
+  },
+  {
+    "conditions": [
+      "unknown_used_all_injections",
+      "used_corticosteroid",
+      "used_hyaluronic_acid"
+    ],
+    "conclusion": "has_used_all_injections"
+  },
+  {
+    "conditions": ["not_used_corticosteroid"],
+    "conclusion": "not_used_all_injections"
+  },
+  {
+    "conditions": ["not_used_hyaluronic_acid"],
+    "conclusion": "not_used_all_injections"
+  },
+
+  {
+    "conditions": ["no_high_risk"],
+    "conclusion": "risk_worth_surgery"
+  },
+  {
+    "conditions": ["high_risk", "willing_to_take_risk"],
+    "conclusion": "risk_worth_surgery"
+  },
+  {
+    "conditions": ["high_risk", "not_willing_to_take_risk"],
+    "conclusion": "advice_too_risky"
+  },
+  {
+    "conditions": ["high_risk_unknown", "heart_disease_risk"],
+    "conclusion": "high_risk"
+  },
+  {
+    "conditions": ["high_risk_unknown", "lung_disease_risk"],
+    "conclusion": "high_risk"
+  },
+  {
+    "conditions": ["high_risk_unknown", "blood_thinners_risk"],
+    "conclusion": "high_risk"
+  },
+  {
+    "conditions": ["high_risk_unknown", "uncontrolled_diabetes_risk"],
+    "conclusion": "high_risk"
+  },
+  {
+    "conditions": ["high_risk_unknown", "kidney_desease_risk"],
+    "conclusion": "high_risk"
+  },
+  {
+    "conditions": ["high_risk_unknown", "blood_clots_history_risk"],
+    "conclusion": "high_risk"
+  },
+  {
+    "conditions": [
+      "high_risk_unknown",
+      "active_infection_or_immune_supression_risk"
+    ],
+    "conclusion": "high_risk"
+  },
+
+  {
+    "conditions": ["not_willing_to_stop_smoking"],
+    "conclusion": "advice_smoking_proticol"
+  },
+
+  {
+    "conditions": [
+      "risk_worth_surgery",
+      "surgery_arthritis_possible",
+      "done_painkillers_lifestyle_injections",
+      "complications_explained",
+      "willing_to_stop_smoking"
+    ],
+    "conclusion": "advice_surgery"
+  }
+]
