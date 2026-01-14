@@ -8,7 +8,7 @@ from inference_engine import ForwardEngine, load_rules_from_json
 We may want to change to backward engine as this 
 """
 
-RULES_PATH = "orthopedic_rules.json"
+RULES_PATH = "orthopedic_rules_2.json"
 
 # These strings MUST match your orthopedic_rules.json facts exactly
 XRAY = ["xray_grade_1", "xray_grade_2", "xray_grade_3", "xray_grade_4"]
