@@ -4,6 +4,11 @@ from tkinter import ttk, messagebox
 from knowledge_base import KnowledgeBase
 from inference_engine import ForwardEngine, load_rules_from_json
 
+import os
+print("Loaded gui.py from:", __file__)
+print("CWD:", os.getcwd())
+
+
 """ 
 We may want to change to backward engine as this 
 """
@@ -11,24 +16,70 @@ We may want to change to backward engine as this
 RULES_PATH = "orthopedic_rules_2.json"
 
 # These strings MUST match your orthopedic_rules.json facts exactly
-XRAY = ["xray_grade_1", "xray_grade_2", "xray_grade_3", "xray_grade_4"]
-PAIN = ["pain_vas_0_2", "pain_vas_3_4", "pain_vas_5_6", "pain_vas_7_8", "pain_vas_9_10"]
-BMI = ["BMI_18_24", "BMI_25_30", "BMI_30_35", "BMI_over_35"]
-AGE = ["age_young_adult", "age_adult", "age_middle_age", "age_elderly", "age_very_elderly"]
-PROM = [
-    "PROM_very_low_function",
-    "PROM_low_function",
-    "PROM_medium_function",
-    "PROM_high_function",
-    "PROM_very_high_function",
+RULES_PATH = "orthopedic_rules_2.json"
+
+KL = ["kl_grade_1", "kl_grade_2", "kl_grade_3", "kl_grade_4"]
+
+PAIN_SIG = ["has_significant_pain", "no_significant_pain"]
+
+BMI = ["BMI_below_18", "BMI_18_24", "BMI_25_30", "BMI_30_35", "BMI_over_35"]
+
+AGE75 = ["age_under_75", "age_over_75"]
+
+LIFESTYLE_STATUS = [
+    "has_done_lifestyle_improvement",
+    "not_done_lifestyle_improvement",
+    "unknown_done_lifestyle_improvement",
 ]
-PREF = [
-    "patient_prefers_surgery",
-    "patient_prefers_non_surgical",
-    "patient_unsure",
-    "patient_prefers_minimal_intervention",
+
+ROOM_IMPROVE = [
+    "room_for_improvement_muscle_strength",
+    "room_for_improvement_conditional",
+    "room_for_improvement_lose_weight",
+    "no_room_for_improvement_muscle_strength",
+    "no_room_for_improvement_conditional",
+    "no_room_for_improvement_lose_weight",
 ]
-COMORB = ["hypertension", "diabetes", "osteoporosis", "heart_disease"]
+
+PAINKILLERS_STATUS = [
+    "has_used_all_painkillers",
+    "not_used_all_painkillers",
+    "unknown_used_all_painkillers",
+]
+
+PAINKILLERS_DETAILS = [
+    "used_paracetamol", "not_used_paracetamol",
+    "used_NSAID", "not_used_NSAID",
+    "used_tramadol", "not_used_tramadol",
+]
+
+INJECTIONS_STATUS = [
+    "has_used_all_injections",
+    "not_used_all_injections",
+    "unknown_used_all_injections",
+]
+
+INJECTIONS_DETAILS = [
+    "used_corticosteroid", "not_used_corticosteroid",
+    "used_hyaluronic_acid", "not_used_hyaluronic_acid",
+]
+
+RISK_STATUS = ["no_high_risk", "high_risk_unknown"]
+RISK_FACTORS = [
+    "heart_disease_risk",
+    "lung_disease_risk",
+    "blood_thinners_risk",
+    "uncontrolled_diabetes_risk",
+    "kidney_desease_risk",  # (or kidney_disease_risk if you fix JSON)
+    "blood_clots_history_risk",
+    "active_infection_or_immune_supression_risk",  # (or suppression)
+]
+
+WILLING_RISK = ["willing_to_take_risk", "not_willing_to_take_risk"]
+SMOKING = ["willing_to_stop_smoking", "not_willing_to_stop_smoking"]
+
+OTHER = ["complications_explained", "no_heart_lungs_problems"]
+
 
 
 def pain_implied_facts(pain_fact: str) -> set[str]:
@@ -80,19 +131,36 @@ class WizardGUI(tk.Tk):
 
         # Define wizard pages (one question per page)
         self.pages = [
-            self.page_choice("X-ray grade", "Select X-ray grade:", XRAY, default=XRAY[-1]),
-            self.page_choice("Pain VAS", "Select pain VAS range:", PAIN, default=PAIN[-1], post_process=pain_implied_facts),
-            self.page_choice("BMI", "Select BMI range:", BMI, default=BMI[-1]),
-            self.page_choice("Age", "Select age category:", AGE, default=AGE[2]),
-            self.page_choice("PROM", "Select PROM functional level:", PROM, default=PROM[1]),
-            self.page_choice("Preference", "What is the patient preference?", PREF, default=PREF[2]),
-            self.page_yesno("Exercise", "Does the patient exercise regularly?", yes_fact="exercise_regularly", no_fact="exercise_not_regularly"),
-            self.page_yesno("Pain medication", "Was pain medication successful?", yes_fact="pain_medication_success", no_fact="pain_medication_not_effective"),
-            self.page_yesno("Physiotherapy", "Was physiotherapy successful?", yes_fact="physiotherapy_success", no_fact="physiotherapy_not_effective"),
-            self.page_yesno("Injections", "Were injections successful?", yes_fact="injections_success", no_fact="injections_not_effective"),
-            self.page_multi("Comorbidities", "Select any comorbidities present (optional):", COMORB),
+            self.page_choice("KL Grade", "Select KL (Kellgren–Lawrence) grade:", KL, default="kl_grade_3"),
+            self.page_choice("Significant pain", "Is there significant pain?", PAIN_SIG, default="has_significant_pain"),
+            self.page_choice("BMI", "Select BMI range:", BMI, default="BMI_25_30"),
+
+            # Lifestyle status
+            self.page_choice("Lifestyle status", "Lifestyle improvements done?", LIFESTYLE_STATUS, default="unknown_done_lifestyle_improvement"),
+            # If unknown, your rules depend on the *no_room_for_improvement_* facts:
+            self.page_multi("Lifestyle room for improvement", "If unknown: mark room/no-room for improvement:", ROOM_IMPROVE),
+
+            # Painkillers status + detail evidence
+            self.page_choice("Painkillers status", "Used all painkillers?", PAINKILLERS_STATUS, default="unknown_used_all_painkillers"),
+            self.page_choice("Age", "Age group relevant for tramadol:", AGE75, default="age_under_75"),
+            self.page_multi("Painkillers detail", "Select applicable painkiller details:", PAINKILLERS_DETAILS),
+
+            # Injections status + detail evidence
+            self.page_choice("Injections status", "Used all injections?", INJECTIONS_STATUS, default="unknown_used_all_injections"),
+            self.page_multi("Injections detail", "Select applicable injection details:", INJECTIONS_DETAILS),
+
+            # Risk pathway
+            self.page_choice("High risk status", "Is high risk known?", RISK_STATUS, default="high_risk_unknown"),
+            self.page_multi("Risk factors", "If unknown: select present risk factors:", RISK_FACTORS),
+            self.page_choice("Risk willingness", "If high risk: willing to take risk?", WILLING_RISK, default="not_willing_to_take_risk"),
+
+            # Smoking + complications
+            self.page_choice("Smoking", "Willing to stop smoking?", SMOKING, default="willing_to_stop_smoking"),
+            self.page_yesno("Complications explained", "Were complications explained?", yes_fact="complications_explained", no_fact="complications_not_explained"),
+
             self.page_review_and_run(),
         ]
+
 
         self.render_page()
 
@@ -199,6 +267,8 @@ class WizardGUI(tk.Tk):
                 # Run forward chaining and display results
                 kb = KnowledgeBase()
                 load_rules_from_json(kb, RULES_PATH)
+                load_rules_from_json(kb, RULES_PATH)
+                print("Rules loaded:", len(kb._rules))
                 for f in self.facts:
                     kb.add_fact(f)
 
@@ -206,14 +276,15 @@ class WizardGUI(tk.Tk):
 
                 #conclusions you probably care about
                 headline = [
-                    "surgery_indicated",
-                    "proceed_with_surgery",
-                    "proceed_with_caution",
-                    "delay_or_avoid_surgery",
-                    "shared_decision_needed",
-                    "urgent_surgery_consideration",
-                    "consider_surgery",
-                    "consider_risk_vs_benefit",
+                    "advice_surgery",
+                    "advice_too_risky",
+                    "advice_weight_loss",
+                    "advice_lifestyle",
+                    "advice_pain_killers",
+                    "advice_injection",
+                    "reason_no_surgery_low_radiographic_severity",
+                    "reason_pain_treatment_explanation",
+                    "risk_worth_surgery",
                 ]
                 found_headlines = [h for h in headline if h in derived]
 

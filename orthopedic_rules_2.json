@@ -186,5 +186,41 @@
       "willing_to_stop_smoking"
     ],
     "conclusion": "advice_surgery"
+  },
+
+  {
+    "conditions":[
+      "advice_pain_killers",
+      "has_done_lifestyle_improvement"
+    ],
+    "conclusion": "advice_given"
+  },
+
+  {
+    "conditions":[
+      "advice_pain_killers",
+      "advice_lifestyle"
+    ],
+    "conclusion": "advice_given"
+  },
+  {
+    "conditions":[
+      "has_used_all_painkillers",
+      "advice_lifestyle"
+    ],
+    "conclusion": "advice_given"
+  },
+
+  {
+    "conditions":[
+      "advice_injection"
+    ],
+    "conclusion": "advice_given"
+  },
+  {
+    "conditions":[
+      "advice_surgery"
+    ],
+    "conclusion": "advice_given"
   }
 ]
