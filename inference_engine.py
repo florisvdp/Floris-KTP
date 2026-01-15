@@ -51,3 +51,4 @@ def load_rules_from_json(kb: KnowledgeBase, filename: str) -> None:
 
     for entry in data:
         kb.add_rule(Rule(entry["conditions"], entry["conclusion"]))
+
