@@ -53,6 +53,7 @@
   },
   {
     "conditions": [
+      "unknown_done_lifestyle_improvement",
       "no_heart_lungs_problems",
       "room_for_improvement_muscle_strength"
     ],
@@ -60,6 +61,7 @@
   },
   {
     "conditions": [
+      "unknown_done_lifestyle_improvement",
       "no_heart_lungs_problems",
       "room_for_improvement_conditional"
     ],
@@ -67,6 +69,7 @@
   },
   {
     "conditions": [
+      "unknown_done_lifestyle_improvement",
       "no_heart_lungs_problems",
       "room_for_improvement_lose_weight"
     ],
@@ -87,28 +90,28 @@
     "conclusion": "has_used_all_painkillers"
   },
   {
-    "conditions": ["age_over_75"],
+    "conditions": ["unknown_used_all_painkillers", "age_over_75"],
     "conclusion": "considered_tramadol"
   },
   {
-    "conditions": ["age_under_75", "used_tramadol"],
+    "conditions": ["unknown_used_all_painkillers", "age_under_75", "used_tramadol"],
     "conclusion": "considered_tramadol"
   },
   {
-    "conditions": ["age_under_75", "not_used_tramadol"],
+    "conditions": ["unknown_used_all_painkillers", "age_under_75", "not_used_tramadol"],
     "conclusion": "not_used_all_painkillers"
   },
   {
-    "conditions": ["not_used_paracetamol"],
+    "conditions": ["unknown_used_all_painkillers", "not_used_paracetamol"],
     "conclusion": "not_used_all_painkillers"
   },
   {
-    "conditions": ["not_used_NSAID"],
+    "conditions": ["unknown_used_all_painkillers", "not_used_NSAID"],
     "conclusion": "not_used_all_painkillers"
   },
 
   {
-    "conditions": ["not_used_all_injections"],
+    "conditions": ["not_used_all_injections", "has_done_lifestyle_improvement", "has_used_all_painkillers"],
     "conclusion": "advice_injection"
   },
   {
@@ -120,11 +123,11 @@
     "conclusion": "has_used_all_injections"
   },
   {
-    "conditions": ["not_used_corticosteroid"],
+    "conditions": ["unknown_used_all_injections", "not_used_corticosteroid"],
     "conclusion": "not_used_all_injections"
   },
   {
-    "conditions": ["not_used_hyaluronic_acid"],
+    "conditions": ["unknown_used_all_injections", "not_used_hyaluronic_acid"],
     "conclusion": "not_used_all_injections"
   },
 
@@ -210,15 +213,16 @@
     ],
     "conclusion": "advice_given"
   },
-
   {
     "conditions":[
+      "done_painkillers_lifestyle",
       "advice_injection"
     ],
     "conclusion": "advice_given"
   },
   {
     "conditions":[
+      "done_painkillers_lifestyle_injections",
       "advice_surgery"
     ],
     "conclusion": "advice_given"

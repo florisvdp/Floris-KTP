@@ -39,6 +39,7 @@ LIFESTYLE_STATUS = [
     "unknown_done_lifestyle_improvement",
 ]
 
+
 ROOM_IMPROVE_MUSCLE = (
     "room_for_improvement_muscle_strength",
     "no_room_for_improvement_muscle_strength",
@@ -124,38 +125,40 @@ COMPLICATIONS_EXPLAINED = (
 )
 
 
-HEART_LUNG_STATUS = (
+HEART_LUNG_LIFESTYLE = (
     "no_heart_lungs_problems",
     "heart_lungs_problems",
 )
 
 YESNO_QUESTIONS = [
-    ("Significant pain", "Is there significant pain?", PAIN_SIGNIFICANT),
-    ("Age", "Is the patient older than 75?", AGE_75),
+    ("Significant pain", "Does the pain make you irritable, and does the limitation caused by your worn-out knee significantly reduce your quality of life?", PAIN_SIGNIFICANT),
+    ("Age", "Are you older than 75?", AGE_75),
 
-    ("Muscle strength", "Room for improvement in muscle strength?", ROOM_IMPROVE_MUSCLE),
-    ("Conditioning", "Room for improvement in conditioning?", ROOM_IMPROVE_CONDITIONAL),
-    ("Weight loss", "Room for improvement in weight loss?", ROOM_IMPROVE_WEIGHT),
+    ("Heart or Lung problems", "Do you have heart or lungs problems that prevent you from exercising", HEART_LUNG_LIFESTYLE),
 
-    ("Paracetamol", "Has paracetamol been used?", PAINKILLER_PARACETAMOL),
-    ("NSAID", "Has an NSAID been used?", PAINKILLER_NSAID),
-    ("Tramadol", "Has tramadol been used?", PAINKILLER_TRAMADOL),
+    ("Muscle strength", "Is there room for improvement in muscle strength?", ROOM_IMPROVE_MUSCLE),
+    ("Conditioning", "Is there room for improvement in conditioning?", ROOM_IMPROVE_CONDITIONAL),
+    ("Weight loss", "Is there room for improvement in weight loss?", ROOM_IMPROVE_WEIGHT),
 
-    ("Corticosteroid", "Corticosteroid injection used?", INJECTION_CORTICOSTEROID),
-    ("Hyaluronic acid", "Hyaluronic acid injection used?", INJECTION_HYALURONIC),
+    ("Paracetamol", "Has paracetamol been used? (3 times a day)", PAINKILLER_PARACETAMOL),
+    ("NSAID", "Has NSAID been tried? (e.g. ibuprofen, diclofenac or naproxen)", PAINKILLER_NSAID),
+    ("Tramadol", "Has tramadol been tried?", PAINKILLER_TRAMADOL),
+
+    ("Corticosteroid", "Was a corticosteroid injection tried?", INJECTION_CORTICOSTEROID),
+    ("Hyaluronic acid", "Was a hyaluronic acid injection tried?", INJECTION_HYALURONIC),
 
     # Risk factors
-    ("Heart disease risk", "Heart disease risk present?", RISK_HEART),
-    ("Lung disease risk", "Lung disease risk present?", RISK_LUNG),
-    ("Blood thinners risk", "Uses blood thinners?", RISK_BLOOD_THINNERS),
-    ("Uncontrolled diabetes risk", "Uncontrolled diabetes present?", RISK_DIABETES),
-    ("Kidney disease risk", "Kidney disease present?", RISK_KIDNEY),
-    ("Blood clots history", "History of blood clots?", RISK_CLOTS),
+    ("Heart disease risk", "Do you have heart failure, angina, a previous heart attack, or a heart valve problem?", RISK_HEART),
+    ("Lung disease risk", "Do you have COPD, severe asthma, or sleep apnea that is untreated?", RISK_LUNG),
+    ("Blood thinners risk", "Do you take blood thinners or have a bleeding/clotting disorder?", RISK_BLOOD_THINNERS),
+    ("Uncontrolled diabetes risk", "Do you have diabetes that is poorly controlled?", RISK_DIABETES),
+    ("Kidney disease risk", "Do you have moderate/severe kidney disease or are you on dialysis?", RISK_KIDNEY),
+    ("Blood clots history", "Have you ever had a blood clot in your leg or lungs?", RISK_CLOTS),
     ("Infection / immune suppression", "Active infection or immune suppression?", RISK_INFECTION),
 
-    ("Risk willingness", "If high risk: willing to accept the risk?", WILLING_RISK),
-    ("Smoking", "Willing to stop smoking?", SMOKING),
-    ("Complications", "Were complications explained?", COMPLICATIONS_EXPLAINED),
+    ("Risk willingness", "You have a high risk of complication during surgery: are you willing to accept the risk?", WILLING_RISK),
+    ("Smoking", "Are you willing to stop smoking 4 before and 2 weeks after surgery?", SMOKING),
+    ("Complications", "Were the possible complications explained that come with every surgery?", COMPLICATIONS_EXPLAINED),
 ]
 
 
@@ -171,6 +174,8 @@ class WizardGUI(tk.Tk):
         # history snapshots: (true_facts, false_facts)
         self.history: list[tuple[set[str], set[str]]] = []
 
+        # Keeps track of which past was previously by using a stack
+        self.nav_stack: list[int] = []
 
         # UI layout
         self.container = ttk.Frame(self, padding=14)
@@ -204,14 +209,14 @@ class WizardGUI(tk.Tk):
         # Define wizard pages (one question per page)
         self.pages = [
             self.page_choice("KL Grade", "Select KL grade:", KL, default="kl_grade_3"),
-            self.page_choice("BMI", "Select BMI range:", BMI, default="BMI_25_30"),
-            self.page_choice("Lifestyle status", "Lifestyle improvements done?",
+            self.page_choice("BMI", "Select your BMI range:", BMI, default="BMI_25_30"),
+            self.page_choice("Lifestyle status", "Have you done all lifestyle improvements?",
                             LIFESTYLE_STATUS, default="unknown_done_lifestyle_improvement"),
-            self.page_choice("Painkillers status", "Used all painkillers?",
+            self.page_choice("Painkillers status", "Did you use/try all painkillers?",
                             PAINKILLERS_STATUS, default="unknown_used_all_painkillers"),
-            self.page_choice("Injections status", "Used all injections?",
+            self.page_choice("Injections status", "Did you use/try injections?",
                             INJECTIONS_STATUS, default="unknown_used_all_injections"),
-            self.page_choice("High risk status", "Is high risk known?",
+            self.page_choice("High risk status", "Do you know if you have increased risk for surgeries? (Select unknown for questionnaire)",
                             RISK_STATUS, default="high_risk_unknown"),
         ]
 
@@ -286,26 +291,41 @@ class WizardGUI(tk.Tk):
         return None
 
     def goto_best_next_page(self):
-        # If gaol already provable, jump to review/run page
-        if self._goal_is_provable():
+        print("\n=== goto_best_next_page ===")
+        print("Current page_index:", self.page_index)
+        print("Current true facts:", sorted(self.kb._true_facts))
+        print("Current false facts:", sorted(self.kb._false_facts))
+
+        # If goal already provable, jump to review/run page
+        provable = self._goal_is_provable()
+        print("Goal provable?", provable)
+
+        if provable:
+            print("→ Jumping to REVIEW because goal is provable")
             self.page_index = len(self.pages) - 1
             self.render_page()
             return
 
         needed = self._next_needed_fact(self.goal)
+        print("Next needed fact:", needed)
+
         if needed is None:
-            # cantt progress -> go to review so user can run and inspect
+            print("→ Jumping to REVIEW because _next_needed_fact returned None")
             self.page_index = len(self.pages) - 1
             self.render_page()
             return
 
         idx = self._find_page_for_fact(needed)
+        print(f"Page index for fact '{needed}':", idx)
+
         if idx is None:
-            # No page can provide this fact -> fallback to review
+            print("→ Jumping to REVIEW because no page provides this fact")
             self.page_index = len(self.pages) - 1
             self.render_page()
             return
 
+        print(f"→ Navigating to page {idx} for fact '{needed}'")
+        self.nav_stack.append(self.page_index)
         self.page_index = idx
         self.render_page()
 
@@ -332,6 +352,13 @@ class WizardGUI(tk.Tk):
 
             def apply():
                 chosen = var.get()
+
+                # unknown does not set the others to true or false since that may change in the future
+                if chosen.startswith("unknown_"):
+                    self.kb.set_fact_true(chosen)
+                    return True
+
+
                 for opt in options:
                     if opt == chosen:
                         self.kb.set_fact_true(opt)
@@ -493,9 +520,10 @@ class WizardGUI(tk.Tk):
             pass
 
     def on_back(self):
-        if self.page_index == 0:
+        if not self.nav_stack:
             return
-        self.page_index -= 1
+
+        self.page_index = self.nav_stack.pop()
 
         # Restore facts from snapshot of previous page (if present)
         if self.page_index < len(self.history):
