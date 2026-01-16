@@ -354,7 +354,7 @@ class WizardGUI(tk.Tk):
                 chosen = var.get()
 
                 # unknown does not set the others to true or false since that may change in the future
-                if chosen.startswith("unknown_"):
+                if chosen.startswith("unknown_") or chosen.endswith("_unknown"):
                     self.kb.set_fact_true(chosen)
                     return True
 
